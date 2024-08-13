@@ -1,0 +1,58 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #E6E6FA;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: black;
+}
+
+.App-rotate90 {
+  transform: rotate(-90deg);
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.style-green {
+	background: #90EE90;
+}
+
+.style-gray {
+	font-size: 0.7em;
+	
+}
+
+.style-version {
+	font-size: 1.3em;
+}
+
+td, th {
+    border: 1px solid black;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.style-blink {
+	animation: style-blink 4s infinite; /* Параметры анимации */
+}
+@keyframes style-blink {
+	from { opacity: 1; /* Непрозрачный текст */ }
+	to { opacity: 0.9; /* Прозрачный текст */ }
+}
+
+
