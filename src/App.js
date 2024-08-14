@@ -176,11 +176,19 @@ function App() {
   const labelRotate = "Rotate" 
 	
   const [time, setTime] = useState(new Date());
+  
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(new Date());
-    }, 1000);
+    }, 60000);
+	
+	axios.get("/cc-rc/rc-config.json")
+      .then(res => {
+        const myData = res.data;
+        setData( myData );
+      });
 
     return () => clearInterval(interval);
   }, []);
@@ -191,26 +199,15 @@ function App() {
   }
   appClassStyle = "App " + appClassStyle;
   
-  
-  const [data, setData] = useState(null);
-  
-  useEffect(() => {
-    axios.get("/rc-config.json")
-      .then(res => {
-        const myData = res.data;
-        setData( myData );
-      });
-
-  }, []);
 	
   return (
 	<div className={appClassStyle}>
 	
 	<Checkbox value={valRotate} setValue={setValRotate} label={labelRotate}></Checkbox>
 	
-      <header className="App-header">
+      <div className="App-header">
 		<TableComponent data={data} />
-      </header>
+      </div>
     </div>
   );
 }

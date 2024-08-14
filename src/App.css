@@ -1,15 +1,9 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+  background-color: #E6E6FA;
 }
 
 .App-header {
-  background-color: #E6E6FA;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,8 +25,7 @@
 }
 
 .style-gray {
-	font-size: 0.7em;
-	
+	font-size: 0.7em;	
 }
 
 .style-version {
