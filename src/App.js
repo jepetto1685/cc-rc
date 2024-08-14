@@ -1,7 +1,8 @@
 import './App.css';
 import { useState, useEffect } from "react";
+import axios from "axios";
 
-
+/*
 const jsonData = [
   { version: '24.071.00' },
   { date: '2024-08-12', time: '10:00', rc: '24.071.00-rc1-вывыывыв' },
@@ -17,7 +18,7 @@ const jsonData = [
   { date: '2024-08-28', time: '10:00', rc: '24.080.00-rc3' },
   { date: '2024-08-29', time: '18:00', rc: 'Стори привязаны, Релиз передвинут 1' },
   { date: '2024-08-30', time: '10:00', rc: '24.080.00-rc4' }
-];
+];*/
 
 const Checkbox = (props) => {
   return (
@@ -43,6 +44,10 @@ Date.prototype.sameDay = function(d) {
 
 const prepareJsonData = (json) => {
 	var result = [];
+	
+	if (json === null) {
+		return result;
+	}
 	
 	let previousDate = new Date(json[1].date);
 	
@@ -185,6 +190,18 @@ function App() {
 	  appClassStyle = "App-rotate90 ";
   }
   appClassStyle = "App " + appClassStyle;
+  
+  
+  const [data, setData] = useState(null);
+  
+  useEffect(() => {
+    axios.get("/rc-config.json")
+      .then(res => {
+        const myData = res.data;
+        setData( myData );
+      });
+
+  }, []);
 	
   return (
 	<div className={appClassStyle}>
@@ -192,7 +209,7 @@ function App() {
 	<Checkbox value={valRotate} setValue={setValRotate} label={labelRotate}></Checkbox>
 	
       <header className="App-header">
-		<TableComponent data={jsonData} />
+		<TableComponent data={data} />
       </header>
     </div>
   );
