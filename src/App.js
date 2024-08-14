@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 const jsonData = [
   { version: '24.071.00' },
-  { date: '2024-08-12', time: '10:00', rc: '24.071.00-rc1' },
+  { date: '2024-08-12', time: '10:00', rc: '24.071.00-rc1-вывыывыв' },
   { date: '2024-08-13', time: '01:00', rc: '24.071.00-rc1' },
   { date: '2024-08-16', time: '23:07', rc: '24.071.00-rc2' },
   { date: '2024-08-16', time: '23:08', rc: '24.071.00-rc2' },
