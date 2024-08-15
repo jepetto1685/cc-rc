@@ -2,24 +2,6 @@ import './App.css';
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-/*
-const jsonData = [
-  { version: '24.071.00' },
-  { date: '2024-08-12', time: '10:00', rc: '24.071.00-rc1-вывыывыв' },
-  { date: '2024-08-13', time: '01:00', rc: '24.071.00-rc1' },
-  { date: '2024-08-16', time: '23:07', rc: '24.071.00-rc2' },
-  { date: '2024-08-16', time: '23:08', rc: '24.071.00-rc2' },
-  { date: '2024-08-17', time: '23:09', rc: '24.071.00-rc2' },
-  { date: '2024-08-18', time: '07:31', rc: '24.071.00-rc3' },
-  { date: '2024-08-19', time: '10:00', rc: '24.071.00-rc4' },
-  { version: '24.080.00' },
-  { date: '2024-08-20', time: '10:00', rc: '24.080.00-rc1' },
-  { date: '2024-08-27', time: '10:00', rc: '24.080.00-rc2' },
-  { date: '2024-08-28', time: '10:00', rc: '24.080.00-rc3' },
-  { date: '2024-08-29', time: '18:00', rc: 'Стори привязаны, Релиз передвинут 1' },
-  { date: '2024-08-30', time: '10:00', rc: '24.080.00-rc4' }
-];*/
-
 const Checkbox = (props) => {
   return (
     <label className="checkbox">
@@ -67,10 +49,8 @@ const prepareJsonData = (json) => {
 			}
 			previousDate = objDate;
 		}
-		
 		result.push(obj);
 	}
-	
 	return result;
 }
 
@@ -99,21 +79,35 @@ const dayOfWeek = (dayInDig) => {
   }
   
 const styleGreen = (dateAndTime, dayOfWeek) => {
-	let addStyle = "";
+	let myStyle1 = "";
+	let myStyle2 = "";
+	let myStyle3 = "";
+	
 	if ((new Date()).sameDay(dateAndTime)) {
-		addStyle = " style-blink";
-	}
-	if (dateAndTime < new Date()) {
+		//сегодня
+		myStyle2 = " style-blink";
+		
 		if ((dateAndTime.getHours() === 0) && (dateAndTime.getMinutes() === 0)){
-			return "" + addStyle;
+			// событие до конца дня
+		} if (dateAndTime < new Date()) {
+			// событие уже наступило
+			myStyle1 = "style-green";
 		} else {
-			return "style-green" + addStyle;
+			// событие наступит
 		}
-	}else if (dayOfWeek === 'СБ' || dayOfWeek === 'ВС') {
-		return "style-gray" + addStyle;
+		
+	} else if (dateAndTime < new Date()) {
+		// вчера
+		myStyle1 = "style-green";
 	} else {
-		return "" + addStyle;
+		// завтра
 	}
+	
+	if (dayOfWeek === 'СБ' || dayOfWeek === 'ВС') {
+		myStyle3 = "style-gray";
+	}
+
+	return myStyle1 + " " + myStyle2 + " " + myStyle3;
 }
 
 const VersionRow = ({ row }) => {
@@ -138,9 +132,9 @@ const EventRow = ({ row }) => {
 
 	return (
 	<tr className= { style }>
-		<td> { dayOfWeek1 } </td>
-		<td> { dateAsString } </td>
-		<td> { row.time } </td>
+		<td> &nbsp; { dayOfWeek1 } &nbsp; </td>
+		<td> &nbsp; { dateAsString } &nbsp; </td>
+		<td> &nbsp; { row.time } &nbsp; </td>
 		<td> { row.rc } </td>
 	</tr>
 	);
@@ -174,24 +168,34 @@ function App() {
 	
   const [valRotate, setValRotate] = useState(true); 
   const labelRotate = "Rotate" 
-	
-  const [time, setTime] = useState(new Date());
   
+  const [number, setNumber] = useState(500000);
+  const [time, setTime] = useState(new Date());
   const [data, setData] = useState(null);
-
+  
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date());
-    }, 60000);
-	
-	axios.get("/cc-rc/rc-config.json")
-      .then(res => {
-        const myData = res.data;
-        setData( myData );
-      });
-
-    return () => clearInterval(interval);
-  }, []);
+	  
+	if (number > 10) {
+		setNumber(1);
+		axios
+		.get("/rc-config.json")
+		.then(res => {
+						const myData = res.data;
+						if (myData != null) {
+							setData( myData );
+						}
+					 }
+		);
+	}
+	  
+    // таймер пересоздаётся каждый раз когда обновляется number
+    const id = setInterval(() => { 
+									setNumber(number + 1);
+									setTime(new Date()); 
+								 }, 1000);
+    return () => { clearInterval(id); };
+  }, [number]);
+  
   
   let appClassStyle = "";
   if (valRotate) {
@@ -199,12 +203,18 @@ function App() {
   }
   appClassStyle = "App " + appClassStyle;
   
+  const currentTimeAsString = time.toLocaleDateString('ru-RU', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+});
 	
   return (
 	<div className={appClassStyle}>
-	
-	<Checkbox value={valRotate} setValue={setValRotate} label={labelRotate}></Checkbox>
-	
+	  <Checkbox value={valRotate} setValue={setValRotate} label={labelRotate}></Checkbox>
+		  <div>{currentTimeAsString + "// " + number}</div>
       <div className="App-header">
 		<TableComponent data={data} />
       </div>
