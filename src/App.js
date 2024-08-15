@@ -169,23 +169,27 @@ function App() {
   const [valRotate, setValRotate] = useState(true); 
   const labelRotate = "Rotate" 
   
-  const [number, setNumber] = useState(500000);
+  const superMaxValue = 5000000000;
+  const [number, setNumber] = useState(superMaxValue);
   const [time, setTime] = useState(new Date());
   const [data, setData] = useState(null);
   
   useEffect(() => {
 	  
-	if (number > 10) {
-		setNumber(1);
+	if ((number > superMaxValue -1) || (number % 120 == 0)) {
 		axios
 		.get("/rc-config.json")
 		.then(res => {
 						const myData = res.data;
 						if (myData != null) {
 							setData( myData );
+							setNumber(1);
 						}
 					 }
-		);
+		)
+		.catch(function (error) {
+			console.log(error.toJSON());
+		});
 	}
 	  
     // таймер пересоздаётся каждый раз когда обновляется number
