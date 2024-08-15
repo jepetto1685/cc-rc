@@ -178,7 +178,7 @@ function App() {
 	  
 	if ((number > superMaxValue -1) || (number % 120 == 0)) {
 		axios
-		.get("/rc-config.json")
+		.get("/cc-rc/rc-config.json")
 		.then(res => {
 						const myData = res.data;
 						if (myData != null) {
@@ -217,8 +217,7 @@ function App() {
 	
   return (
 	<div className={appClassStyle}>
-	  <Checkbox value={valRotate} setValue={setValRotate} label={labelRotate}></Checkbox>
-		  <div>{currentTimeAsString + "// " + number}</div>
+	  <Checkbox value={valRotate} setValue={setValRotate} label={labelRotate + currentTimeAsString + "// " + number}></Checkbox>
       <div className="App-header">
 		<TableComponent data={data} />
       </div>
