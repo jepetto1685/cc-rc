@@ -217,7 +217,7 @@ function App() {
 	
   return (
 	<div className={appClassStyle}>
-	  <Checkbox value={valRotate} setValue={setValRotate} label={labelRotate + currentTimeAsString + "// " + number}></Checkbox>
+	  <Checkbox value={valRotate} setValue={setValRotate} label={labelRotate + "  " + currentTimeAsString + "// " + number}></Checkbox>
       <div className="App-header">
 		<TableComponent data={data} />
       </div>
