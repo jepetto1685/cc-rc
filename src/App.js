@@ -94,7 +94,7 @@ const prepareJsonBirthDayData = (json) => {
 			let a_icon = "";
 			let a_isToday = false;
 			if (a_bithday_date.sameDay(now1)) {
-				a_icon = "/cc-rc/birthday_cake.png";
+				a_icon = "/cc-rc/cake.png";
 				a_isToday = true;
 			}
 
