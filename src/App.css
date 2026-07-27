@@ -34,12 +34,16 @@
 }
 
 .style-dayoff {
-    font-size: 0.7em;
+    font-size: 0.6em;
     color: red;
 }
 
+.style-workday {
+    font-size: 0.9em;
+}
+
 .style-version {
-    font-size: 1.3em;
+    font-size: 1.2em;
 }
 
 td, th {

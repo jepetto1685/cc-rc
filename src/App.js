@@ -25,7 +25,7 @@ Date.prototype.sameDay = function(d) {
 		&& this.getMonth() === d.getMonth();
 }
 
-const prepareJsonData = (json) => {
+const prepareJsonReleaseData = (json) => {
 	var result = [];
 
 	if (json === null) {
@@ -46,13 +46,31 @@ const prepareJsonData = (json) => {
 			while (!previousDate.sameDay(objDate)) {
 				previousDate.setDate(previousDate.getDate() + 1);
 				if (!previousDate.sameDay(objDate)) {
-					result.push({date: previousDate.toISOString().slice(0, 10), time: '', rc: ''});
+					// Дополнение до последней событийной строки
+					result.push({date: previousDate.toISOString().slice(0, 10), time: '', rc: '', type: 'release_event'});
 				}
 			}
+			// Событийная строка
 			previousDate = objDate;
+			result.push({date: previousDate.toISOString().slice(0, 10), time: obj.time, rc: obj.rc, type: 'release_event'});
+		} else {
+			result.push({version : obj.version, type: 'release_version'});
 		}
-		result.push(obj);
 	}
+
+	result.push({ type: 'release_empty' });
+
+	let json_future_release_info = json["future-release-info"];
+	for(let i = 0; i < json_future_release_info.length; i++) {
+		let obj = json_future_release_info[i];
+
+		let a_date = new Date(obj.date);
+		let a_version = obj.version;
+
+		result.push({version : a_version, date : a_date.toISOString().slice(0, 10), type: 'release_future'});
+	}
+
+
 	return result;
 }
 
@@ -98,7 +116,7 @@ const prepareJsonBirthDayData = (json) => {
 				a_isToday = true;
 			}
 
-			let a_birthday_text = a_birthday_day + " " + getRussianMonthByIndex(a_birthday_month);
+			let a_birthday_text = a_birthday_day + " " + getRussianMonthByIndex(a_birthday_month - 1);
 
 			result.push({birthday: a_birthday_text, name: a_name, icon: a_icon, isToday : a_isToday });
 		}
@@ -188,12 +206,14 @@ const styleGreen = (dateAndTime, dayOfWeek) => {
 
 	if (dayOfWeek === 'СБ' || dayOfWeek === 'ВС') {
 		myStyle3 = "style-dayoff";
+	} else {
+		myStyle3 = " style-workday";
 	}
 
 	return myStyle1 + " " + myStyle2 + " " + myStyle3;
 }
 
-const VersionRow = ({ row }) => {
+const ReleaseVersionRow = ({ row }) => {
 	return (
 		<tr>
 			<td colspan="4" className="style-version"> { row.version } </td>
@@ -201,7 +221,15 @@ const VersionRow = ({ row }) => {
 	);
 }
 
-const EventRow = ({ row }) => {
+const ReleaseEmptyRow = ({ row }) => {
+	return (
+		<tr>
+			<td colspan="4" className="style-version"> &nbsp; </td>
+		</tr>
+	);
+}
+
+const ReleaseEventRow = ({ row }) => {
 
 	const date = new Date(row.date + " " + row.time);
 	const dayOfWeek1 = dayOfWeek(date.getDay());
@@ -223,24 +251,53 @@ const EventRow = ({ row }) => {
 	);
 }
 
-const TableRow = ({ row }) => {
-	const rowType = typeof row.version !== 'undefined';
+const ReleaseFutureRow = ({ row }) => {
 
-	if (rowType) {
-		return <VersionRow row={row} />
-	} else {
-		return <EventRow row={row} />
-	};
+	const date = new Date(row.date);
+	const dayOfWeek1 = dayOfWeek(date.getDay());
+	const style = styleGreen(date, dayOfWeek1);
+
+	const dateAsString = date.toLocaleDateString('ru-RU', {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	});
+
+	return (
+		<tr className= { style }>
+			<td> &nbsp; { dayOfWeek1 } &nbsp; </td>
+			<td> &nbsp; { dateAsString } &nbsp; </td>
+			<td> &nbsp;  &nbsp; </td>
+			<td> { row.version } </td>
+		</tr>
+	);
+}
+
+const ReleaseTableRow = ({ row }) => {
+
+	if (row.type === 'release_version') {
+		return <ReleaseVersionRow row={row} />
+	}
+	if (row.type === 'release_event') {
+		return <ReleaseEventRow row={row} />
+	}
+	if (row.type === 'release_future') {
+		return <ReleaseFutureRow row={row} />
+	}
+
+	if (row.type === 'release_empty') {
+		return <ReleaseEmptyRow row={row} />
+	}
 }
 
 const TableComponent = ({ data }) => {
-	const rows = prepareJsonData(data);
+	const rows = prepareJsonReleaseData(data);
 
 	return (
 		<table>
 			<tbody>
 			{rows.map((row1, index) => (
-				<TableRow row={row1} />
+				<ReleaseTableRow row={row1} />
 			))}
 			</tbody>
 		</table>
@@ -304,7 +361,7 @@ const HollydayComponent = ({ data }) => {
 };
 
 const isConfetti = (data) => {
-	const rows = prepareJsonData(data);
+	const rows = prepareJsonReleaseData(data);
 	for(let i = 0; i < rows.length; i++) {
 		let row = rows[i];
 		if (row.rc?.includes('Внедрение')) {
@@ -382,7 +439,7 @@ function App() {
 				<table>
 					<tbody>
 					<tr>
-						<td className="style-top"><HollydayComponent data={data} /></td>
+						<td className="style-top"><HollydayComponent data={data} /> <br/> </td>
 						<td><div className="App-header"><TableComponent data={data} /></div></td>
 						<td className="style-top"><BirthDayComponent data={data} /></td>
 					</tr>
