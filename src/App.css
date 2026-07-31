@@ -34,12 +34,19 @@
 }
 
 .style-dayoff {
-    font-size: 0.6em;
     color: red;
 }
 
-.style-workday {
+.style-release-small {
+    font-size: 0.6em;
+}
+
+.style-release-normal {
     font-size: 0.9em;
+}
+
+.style-workday {
+
 }
 
 .style-version {

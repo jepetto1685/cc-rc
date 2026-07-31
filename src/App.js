@@ -179,10 +179,11 @@ const dayOfWeek = (dayInDig) => {
 	}
 }
 
-const styleGreen = (dateAndTime, dayOfWeek) => {
+const releaseRowStyle = (dateAndTime, dayOfWeek, row) => {
 	let myStyle1 = "";
 	let myStyle2 = "";
 	let myStyle3 = "";
+	let myStyle4 = "";
 
 	if ((new Date()).sameDay(dateAndTime)) {
 		//сегодня
@@ -207,10 +208,21 @@ const styleGreen = (dateAndTime, dayOfWeek) => {
 	if (dayOfWeek === 'СБ' || dayOfWeek === 'ВС') {
 		myStyle3 = "style-dayoff";
 	} else {
-		myStyle3 = " style-workday";
+		myStyle3 = "style-workday";
 	}
 
-	return myStyle1 + " " + myStyle2 + " " + myStyle3;
+	// Размер шрифтов
+	if (row.rc === '') {
+		myStyle4 = "style-release-small";
+	} else {
+		myStyle4 = "style-release-normal";
+	}
+
+	if (dayOfWeek === 'СБ' || dayOfWeek === 'ВС') {
+		myStyle4 = "style-release-small";
+	}
+
+	return myStyle1 + " " + myStyle2 + " " + myStyle3 + " " + myStyle4;
 }
 
 const ReleaseVersionRow = ({ row }) => {
@@ -233,7 +245,7 @@ const ReleaseEventRow = ({ row }) => {
 
 	const date = new Date(row.date + " " + row.time);
 	const dayOfWeek1 = dayOfWeek(date.getDay());
-	const style = styleGreen(date, dayOfWeek1);
+	const style = releaseRowStyle(date, dayOfWeek1, row);
 
 	const dateAsString = date.toLocaleDateString('ru-RU', {
 		year: 'numeric',
@@ -255,7 +267,7 @@ const ReleaseFutureRow = ({ row }) => {
 
 	const date = new Date(row.date);
 	const dayOfWeek1 = dayOfWeek(date.getDay());
-	const style = styleGreen(date, dayOfWeek1);
+	const style = releaseRowStyle(date, dayOfWeek1, row);
 
 	const dateAsString = date.toLocaleDateString('ru-RU', {
 		year: 'numeric',
